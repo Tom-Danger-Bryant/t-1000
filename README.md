@@ -1,69 +1,57 @@
-# Log10 engineering take home challenge
+# Take Home Interview
 
-## About the company
+## Getting Started
+This app runs on the following technologies
+- Next JS (main app)
+- GraphQL (middleware)
+- Prisma / Postgres (DB)
 
-Log10 is addressing the challenges around reliability and consistency of LLM-powered applications via a platform that provides robust evaluations, fine-tuning and debugging tools. We are currently a team of 8 having previously worked in AI and infra roles at companies such as Intel, MosaicML,  Docker, SiFive, Starburst and Adobe.
+## What to expect
+- You can chat with a friendly T-1000
+- Your chat threads are persisted in the DB 
+- Start a new chat by clicking the "new thead" button
 
-## About the challenge
+## Installation
+For the best experience execute the following steps (A docker compose file is present to help with future runs).
 
-As a part of log10’s hiring process, we use a take home challenge that’s hopefully fun, engaging and gives us something to go over together during your interview. Try only to use the base components and libraries provided by nextjs, tailwindui and other common packages.
+1. Set up your env - all services use a single `.env.local`. You can copy the .env.example file to figure out what vars you need to supply. The database env variables will also be used in the creation of your DB. 
 
-We are looking for:
+**IMPORTANT:**
+ For docker networking to work locally you must list the postgres hostname as `database` instead of localhost.
+ So your environment variable `POSTGRES_PRISMA_URL` should look something like this
 
-- That it works - for us when we try your submission, and when you demo it on the follow up call.
-- Code quality - safe, reliable, easy to read.
-- Ability to explain your decisions when we chat about your submission.
-
-Try not to spend more than 8 hours on the test, but feel free to add bells and whistles if time allows.
-
-# Challenge: Server-side Streaming Playgrounds
-
-Playgrounds have come to play a big role in LLM application development. It allows developers to discover the limits of the models, and learn how different variants of prompts produce different kinds of output.
-
-You have a web application which displays the system, user and assistant (AI) messages, allows a user to type and submit additional messages and uses the OpenAI API to produce new assistant messages.
-
-![Architecture](./public/arch.png)
-
-The provided skeleton repository uses the OpenAI API directly (without the backend to relay the requests). So your task is to extend it with one or more of the following options:
-
-### Front-end focus: Add support for streaming generation in the front-end.
-
-OpenAI supports streaming of generations. This provides a nice user experience, as long generations can be a bit jarring to wait for.
-
-### Back-end focus: Move OpenAI calls to the NextJS API.
-
-As you can tell, the call to OpenAI and its key management isn’t safe for production. Move the calls to NextJS API to make this more secure.
-
-### Bonus (front and back end): Streaming server side support.
-
-Now that server side support of the OpenAI call, make it support streaming, too.
-
-### Bonus (front and back end): Use GraphQL API for server side support.
-
-With or without streaming support (subscriptions), we prefer to use GraphQL over REST.
-
-### Bonus (front-end): Add bells and whistles in the UI.
-
-The skeleton implementation is very limited on purpose. Feel free to add the ability to change the system prompt, edit existing messages, adding new threads etc.
-
-### Bonus (back-end): Persistance layer
-
-Use a database to persist LLM messages (and/or threads) across reloads.
-
-## Submission
-
-Please zip your solution and email it as an attachment to us. We will run your code locally.
-
-## Running the skeleton repository
-
-Get started by replacing the OpenAI key in `src/app/page.tsx` and run the following:
-
-```bash
-yarn dev
+```
+POSTGRES_PRISMA_URL="postgresql://<system>:<secret>@database:5432/<db>?schema=public"
 ```
 
-or
+`<system>` should be the same value as `POSTGRES_USER`
+`<secret>` should be the same value as `POSTGRES_PASSWORD`
+`<db>` should be the same value as `POSTGRES_DB`
 
-```bash
-npm dev
+**A pre-existing database is not required**
+
+2. From the repo root - turn on the Core services (db and frontend) using the 'core' profile
 ```
+docker compose -f compose.yml --profile "core" up
+```
+
+3. Once your database is up (and you see postgres logs) you can run the migrations using the 'migrate'
+```
+docker compose -f compose.yml --profile "migrate" up
+```
+**IMPORTANT NOTE - The db container must be running when you run the `migrate` container**
+
+4. Navigate to localhost:3000 to access the application - have fun!
+
+## To Do
+- Error Handling (there is a sincere lack of error handling in this application right now)
+- GraphQL hook generation (to ensure typesafety & for convenience)
+- Test
+- Hook up redis for graphql subsriptions to allow streaming over graphQL
+
+
+## Refrences
+Here are some links to content that I referenced & will help with further development
+- https://sdk.vercel.ai/docs/reference/ai-sdk-ui/use-chat
+- https://www.npmjs.com/package/ai
+- https://www.apollographql.com/docs/react/data/subscriptions/

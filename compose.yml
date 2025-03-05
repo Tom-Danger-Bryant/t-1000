@@ -1,0 +1,41 @@
+services: 
+  database:
+    profiles : ['core', 'db']
+    image: postgres:15.3-alpine3.18
+    restart : always
+    env_file: 
+      - .env.local
+    ports: 
+      - "5432:5432"
+    volumes:
+      - playground_data:/var/lib/postgresql/data/
+    networks:
+      - default
+  frontend:
+    profiles: ['core','frontend']
+    image: frontend
+    build :
+      dockerfile: Dockerfile
+    restart : always
+    env_file: 
+      - .env.local
+    ports: 
+      - "3000:3000"
+    depends_on:
+      - database
+    networks:
+      - default
+  migrations:
+    profiles: ['migrate']
+    image : migrations
+    build:
+      dockerfile: migrations.Dockerfile
+    env_file:
+      - .env.local
+    networks:
+      - default
+
+
+volumes:
+  playground_data:
+

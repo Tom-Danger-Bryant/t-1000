@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+
+datasource db {
+  provider = "postgresql"
+  url = env("POSTGRES_PRISMA_URL") 
+}
+
+model Thread {
+    id  Int     @id @default(autoincrement())
+    slug String 
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+    messages Message[]
+@@map("threads")
+}
+
+model Message {
+    id  Int     @id @default(autoincrement())
+    thread Thread @relation(fields:[threadId],references: [id] )
+    role String
+    content  String
+    threadId    Int @map("thread_id")
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+@@map("messages")
+}
