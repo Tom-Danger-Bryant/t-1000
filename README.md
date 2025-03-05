@@ -1,4 +1,4 @@
-# Take Home Interview
+# T-100 ChatBot
 
 ## Getting Started
 This app runs on the following technologies
